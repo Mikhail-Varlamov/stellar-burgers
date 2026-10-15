@@ -1,21 +1,37 @@
 import { Preloader, OrderInfoUI } from '@ui';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+
+import {
+  selectFeedOrders,
+  selectIngredients,
+  selectProfileOrders,
+  selectViewedOrder,
+} from '@services/selectors';
+import { fetchOrderByNumber } from '@services/slices/order-slice';
+import { useDispatch, useSelector } from '@services/store';
 
 import type { TIngredient } from '@utils-types';
 
 export const OrderInfo = (): React.JSX.Element => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0,
-  };
+  const { number } = useParams();
+  const dispatch = useDispatch();
+  const orderNumber = Number(number);
+  const ingredients = useSelector(selectIngredients);
+  const feedOrders = useSelector(selectFeedOrders);
+  const profileOrders = useSelector(selectProfileOrders);
+  const viewedOrder = useSelector(selectViewedOrder);
 
-  const ingredients: TIngredient[] = [];
+  const storedOrder = [...feedOrders, ...profileOrders].find(
+    (order) => order.number === orderNumber
+  );
+  const orderData = storedOrder ?? viewedOrder;
+
+  useEffect(() => {
+    if (!storedOrder) {
+      void dispatch(fetchOrderByNumber(orderNumber));
+    }
+  }, [dispatch, orderNumber, storedOrder]);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
