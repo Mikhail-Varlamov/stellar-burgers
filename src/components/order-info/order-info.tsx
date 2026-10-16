@@ -25,7 +25,8 @@ export const OrderInfo = (): React.JSX.Element => {
   const storedOrder = [...feedOrders, ...profileOrders].find(
     (order) => order.number === orderNumber
   );
-  const orderData = storedOrder ?? viewedOrder;
+  const orderData =
+    storedOrder ?? (viewedOrder?.number === orderNumber ? viewedOrder : null);
 
   useEffect(() => {
     if (!storedOrder) {

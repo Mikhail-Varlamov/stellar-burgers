@@ -61,9 +61,9 @@ export const checkAuth = createAsyncThunk('user/checkAuth', async () => {
   try {
     const response = await getUserApi();
     return response.user;
-  } catch {
+  } catch (error) {
     clearTokens();
-    return null;
+    throw error;
   }
 });
 
@@ -86,6 +86,7 @@ const userSlice = createSlice({
         state.isAuthChecked = true;
       })
       .addCase(checkAuth.rejected, (state) => {
+        state.user = null;
         state.isAuthChecked = true;
       })
       .addCase(registerUser.pending, (state) => {

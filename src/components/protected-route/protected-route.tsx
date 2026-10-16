@@ -5,6 +5,7 @@ import { selectIsAuthChecked, selectUser } from '@services/selectors';
 import { useSelector } from '@services/store';
 
 import type { ProtectedRouteProps } from './type';
+import type { Location } from 'react-router-dom';
 
 export const ProtectedRoute = ({
   onlyUnAuth = false,
@@ -19,18 +20,12 @@ export const ProtectedRoute = ({
   }
 
   if (onlyUnAuth && user) {
-    const { from } = (location.state as { from?: string } | null) ?? {};
+    const { from } = (location.state as { from?: Location } | null) ?? {};
     return <Navigate to={from ?? '/'} replace />;
   }
 
   if (!onlyUnAuth && !user) {
-    return (
-      <Navigate
-        to="/login"
-        state={{ from: location.pathname + location.search }}
-        replace
-      />
-    );
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
