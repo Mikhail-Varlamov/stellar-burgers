@@ -162,7 +162,7 @@ test.describe('ingredient details modal', () => {
     const modal = page.locator('#modals');
     await expect(modal.getByText('Детали ингредиента')).toBeVisible();
 
-    await page.mouse.click(5, 5);
+    await page.getByTestId('modal-overlay').dispatchEvent('click');
 
     await expect(modal.getByText('Детали ингредиента')).toHaveCount(0);
     await expect(page).toHaveURL('/');
